@@ -46,5 +46,6 @@ def checkFiles(term):
 
     
 
-checkFiles("ephimnignignigneral")
+
+checkFiles("temp")
 
