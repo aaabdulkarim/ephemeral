@@ -1,6 +1,11 @@
 import os
 import threading
 
+
+# Konstante Werte
+DEFAULT_SECONDS = 3600
+
+
 class EphemeralFileManager:
     
     def __init__(self, base_path, term="ephemeral"):
@@ -8,6 +13,12 @@ class EphemeralFileManager:
         self.term = term.lower()
         self.registered_paths = []
 
+    
+    def add_ephemeral_path(self, list):
+        """
+        This Methods adds external lists to the registered path
+        """
+        self.registered_paths = self.registered_paths + list
 
     def add_ephemeral_path(self, root, d, hours, minutes):
         """
@@ -41,7 +52,7 @@ class EphemeralFileManager:
                         continue
 
 
-    def check_files(self):
+    def makro_file_check(self):
         """
         Walk through directories and files to find ephemeral ones based on the term.
         """
@@ -69,12 +80,19 @@ class EphemeralFileManager:
         except Exception as e:
             print(f"Error deleting {path}: {e}")
 
-class TimeManager:
-    def __init__(self, configObject):
+
+class TaskManager:
+    def __init__(self, configObject, ephemeralFileManager):
         self.configs = configObject
+        self.fileManager = ephemeralFileManager
 
 
+    def start_tasks(self):
+        for path in self.ephemeralFileManager.registered_paths: 
+            # Needs to check if hourLeft and minutesLeft isn't empty
+            timer = threading.Timer(3600, self.ephemeralFileManager.delete_path, args=())
 # Example usage
-manager = EphemeralFileManager("/home/amadeus")
-manager.check_files()
+manager = EphemeralFileManager("/home/amadeus", )
+manager.makro_file_check()
+
 print(manager.registered_paths)
