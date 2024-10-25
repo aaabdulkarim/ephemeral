@@ -32,6 +32,7 @@ def isEphemeral(dirs, term, root):
                     if condition:
                         print(root, d)
                         registeredPaths.append(root + d)
+
                 except IndexError:
                     continue
     
@@ -54,8 +55,5 @@ def checkFiles(term):
 
 
 
-    
-
-
 checkFiles("ephemeral")
-
+print(registeredPaths)
