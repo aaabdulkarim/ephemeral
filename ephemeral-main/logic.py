@@ -12,8 +12,15 @@ def isEphemeral(dirs, term, root):
     for idx, d in enumerate(dirs):
         str_list = d.split()
         # if Term is triggered
-        if idx <= len(str_list) - 3:
-            condition = term.lower() in str_list, str_list[idx + 1].isnumeric() and str_list[idx + 2] == ":" and str_list[idx + 3]
+        if idx < len(str_list) - 3:
+            conditionTerm = term.lower() in str_list
+            conditionMinutes = str_list[idx + 1].isnumeric()
+            condtionColon = str_list[idx + 2] == ":" 
+            conditionSeconds = str_list[idx + 3].isnumeric()
+            
+
+            condition = conditionTerm  and  conditionMinutes and conditionSeconds  
+
             if condition:
                 print(root, d)
                 registeredPaths.append(root + d)
@@ -39,4 +46,5 @@ def checkFiles(term):
 
     
 
-checkFiles("ephimeral")
+checkFiles("ephimnignignigneral")
+
