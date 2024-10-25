@@ -1,8 +1,7 @@
 class Config():
 
     def __init__(self):
-        self.targetDirs = ["temp"]
-        self.targetFiles = ["temp"]
+        self.absolutePaths = [""]
         self.timeToDelete = 300
 
 
