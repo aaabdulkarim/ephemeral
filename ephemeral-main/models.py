@@ -20,24 +20,27 @@ class EphemeralFileManager:
         """
         self.registered_paths = self.registered_paths + list
 
+
     def add_ephemeral_path(self, root, d, hours, minutes):
         """
         Register an ephemeral path with its lifetime in hours and minutes.
         """
         path = os.path.join(root, d)
         file_dict = {
-            "pathname": path,
+            "pathName": path,
             "hoursLeft": int(hours),
             "minutesLeft": int(minutes)
         }
         self.registered_paths.append(file_dict)
         print(f"Registered ephemeral path: {path}")
 
+
     def is_ephemeral(self, dirs, root):
         """
         Check if a directory or file is ephemeral based on the naming convention.
         """
         for d in dirs:
+            # Split 
             str_list = d.split("-")
             for idx, part in enumerate(str_list):
                 if part.lower() == self.term:
@@ -48,6 +51,8 @@ class EphemeralFileManager:
 
                         if hours.isnumeric() and colon == ":" and minutes.isnumeric():
                             self.add_ephemeral_path(root, d, hours, minutes)
+
+
                     except IndexError:
                         continue
 
@@ -85,13 +90,24 @@ class TaskManager:
     def __init__(self, configObject, ephemeralFileManager):
         self.configs = configObject
         self.fileManager = ephemeralFileManager
-
+        self.timers = []
+    
 
     def start_tasks(self):
         for path in self.ephemeralFileManager.registered_paths: 
+            method_delay = DEFAULT_SECONDS
+
             # Needs to check if hourLeft and minutesLeft isn't empty
-            timer = threading.Timer(3600, self.ephemeralFileManager.delete_path, args=())
-# Example usage
+            if "minutesLeft" in path and "hoursLeft" in path:
+                method_delay = path["hourseLeft"] * 3600 + path["minutesLeft"] * 60
+            
+            timer = threading.Timer(method_delay, self.ephemeralFileManager.delete_path, args=(path["pathName"]))
+            timers.append(timer)
+
+
+    def continous_loop(self):
+        pass
+
 manager = EphemeralFileManager("/home/amadeus", )
 manager.makro_file_check()
 

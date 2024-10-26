@@ -1,10 +1,10 @@
 class Config():
     """
-    How do we design the config file to allow "filters" which are related
+    Config Object which helps communication between user config file and all model classes
     """
     def __init__(self):
         self.absolutePaths = [""]
-        self.timeToDelete = 300
+        self.defaultTimeToLive = 3600
 
         # Think of Data structure to only use this on a path e.g "home/desktop/"
         self.filetypesToDelete = [""]
