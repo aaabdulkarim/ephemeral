@@ -28,6 +28,7 @@ class ModelTest(unittest.TestCase):
         """
         Prerequisits: file with ephemeral naming convention on the system
         """
+        self.ephemeralFileManager.makro_file_check()
         self.taskManager.start_tasks()
         self.assertGreaterEqual(len(self.taskManager.timers), 1)  
 
@@ -36,6 +37,7 @@ class ModelTest(unittest.TestCase):
         """
         Prerequisits: file with ephemeral naming convention on the system
         """
+        self.ephemeralFileManager.makro_file_check()
         self.taskManager.start_tasks()
         
         foundTimers = [timer for timer in self.taskManager.timers]
@@ -50,9 +52,8 @@ class ModelTest(unittest.TestCase):
         """
         Prerequisits: file with ephemeral naming convention on the system
         """
+        self.ephemeralFileManager.makro_file_check()
         self.taskManager.start_tasks()
+
         print(self.taskManager.timers[0].interval)
 
-
-
-unittest.main()

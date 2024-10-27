@@ -7,6 +7,8 @@ def main():
     config.loadFile()
     ephemeralFileManager = EphemeralFileManager("/")
     taskManager = TaskManager(config, ephemeralFileManager)
+
+    ephemeralFileManager.makro_file_check()
     taskManager.start_tasks()
     print(ephemeralFileManager.registered_paths)
 if __name__ == "__main__":
