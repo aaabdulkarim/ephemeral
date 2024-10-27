@@ -5,7 +5,7 @@ from configmodel import Config
 def main():
     config = Config()
     config.loadFile()
-    ephemeralFileManager = EphemeralFileManager(config)
+    ephemeralFileManager = EphemeralFileManager("/")
     taskManager = TaskManager(config, ephemeralFileManager)
     taskManager.start_tasks()
     print(ephemeralFileManager.registered_paths)
