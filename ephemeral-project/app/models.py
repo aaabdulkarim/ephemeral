@@ -1,11 +1,10 @@
 import os
 import threading
-
-
+import time
 
 
 class EphemeralFileManager:
-    
+
     def __init__(self, base_path, term="ephemeral"):
         self.base_path = base_path
         self.term = term.lower()
@@ -38,7 +37,6 @@ class EphemeralFileManager:
         Check if a directory or file is ephemeral based on the naming convention.
         """
         for d in dirs:
-            # Split 
             str_list = d.split("-")
             for idx, part in enumerate(str_list):
                 if part.lower() == self.term:
@@ -97,10 +95,10 @@ class TaskManager:
 
             # Needs to check if hourLeft and minutesLeft isn't empty
             if "minutesLeft" in path and "hoursLeft" in path:
-                method_delay = path["hourseLeft"] * 3600 + path["minutesLeft"] * 60
+                method_delay = path["hoursLeft"] * 3600 + path["minutesLeft"] * 60
             
             timer = threading.Timer(method_delay, self.fileManager.delete_path, args=(path["pathName"]))
-            timers.append(timer)
+            self.timers.append(timer)
 
 
     def continous_loop(self):

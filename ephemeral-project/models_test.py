@@ -35,16 +35,27 @@ class ModelTest(unittest.TestCase):
 
     def test_task_manager_adds_expected_timer(self):
         """
-        Prerequisits: file with ephemeral naming convention on the system
+        Prerequisits: file named testing-purpose-ephemeral-0-:-20 convention on the system
         """
         self.ephemeralFileManager.makro_file_check()
         self.taskManager.start_tasks()
-        
-        foundTimers = [timer for timer in self.taskManager.timers]
 
         expectedString = "/home/amadeus/Documents/eigene-projekte/ephemeral/sample-files/testing-purpose-ephemeral-0-:-20"
-        expectedTimer = threading.Timer(60 * 20, self.ephemeralFileManager.delete_path, args=(expectedString))
-        self.assertIn(expectedTimer, foundTimers)
+        expectedFun = self.ephemeralFileManager.delete_path
+        expectedArgs = expectedString
+
+
+        foundExpectedTimer = False
+        for timer in self.taskManager.timers:
+            conditions = [
+                timer.interval == 60*20,
+                timer.function == expectedFun
+            ]    
+            if all(conditions):
+                foundExpectedTimer = True
+                break
+                
+        self.assertTrue(foundExpectedTimer)
 
 
 
@@ -54,6 +65,5 @@ class ModelTest(unittest.TestCase):
         """
         self.ephemeralFileManager.makro_file_check()
         self.taskManager.start_tasks()
-
-        print(self.taskManager.timers[0].interval)
+        print(self.taskManager.timers[0])
 
