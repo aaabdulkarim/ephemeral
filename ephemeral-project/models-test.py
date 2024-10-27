@@ -1,4 +1,4 @@
-import app.models
+import threading
 import unittest
 from app.models import EphemeralFileManager, TaskManager
 from app.configmodel import Config
@@ -22,7 +22,36 @@ class ModelTest(unittest.TestCase):
         
         # List Comprehension - returns a list of the pathnames from all dicts saved in the listS
         foundPathNames = [pathName["pathName"] for pathName in self.ephemeralFileManager.registered_paths]
-        self.assertTrue(expectedString in foundPathNames)
+        self.assertIn(expectedString, foundPathNames)
+
+    def test_task_manager_adds_timer(self):
+        """
+        Prerequisits: file with ephemeral naming convention on the system
+        """
+        self.taskManager.start_tasks()
+        self.assertGreaterEqual(len(self.taskManager.timers), 1)  
+
+
+    def test_task_manager_adds_expected_timer(self):
+        """
+        Prerequisits: file with ephemeral naming convention on the system
+        """
+        self.taskManager.start_tasks()
+        
+        foundTimers = [timer for timer in self.taskManager.timers]
+
+        expectedString = "/home/amadeus/Documents/eigene-projekte/ephemeral/sample-files/testing-purpose-ephemeral-0-:-20"
+        expectedTimer = threading.Timer(60 * 20, self.ephemeralFileManager.delete_path, args=(expectedString))
+        self.assertIn(expectedTimer, foundTimers)
+
+
+
+    def test_task_manager_triggers_delete_fun(self):
+        """
+        Prerequisits: file with ephemeral naming convention on the system
+        """
+        self.taskManager.start_tasks()
+        print(self.taskManager.timers[0].interval)
 
 
 
