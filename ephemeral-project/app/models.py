@@ -2,8 +2,6 @@ import os
 import threading
 
 
-# Konstante Werte
-DEFAULT_SECONDS = 3600
 
 
 class EphemeralFileManager:
@@ -94,21 +92,19 @@ class TaskManager:
     
 
     def start_tasks(self):
-        for path in self.ephemeralFileManager.registered_paths: 
-            method_delay = DEFAULT_SECONDS
+        for path in self.fileManager.registered_paths: 
+            method_delay = self.configs.defaultTimeToLive
 
             # Needs to check if hourLeft and minutesLeft isn't empty
             if "minutesLeft" in path and "hoursLeft" in path:
                 method_delay = path["hourseLeft"] * 3600 + path["minutesLeft"] * 60
             
-            timer = threading.Timer(method_delay, self.ephemeralFileManager.delete_path, args=(path["pathName"]))
+            timer = threading.Timer(method_delay, self.fileManager.delete_path, args=(path["pathName"]))
             timers.append(timer)
 
 
     def continous_loop(self):
-        pass
-
-manager = EphemeralFileManager("/home/amadeus", )
-manager.makro_file_check()
-
-print(manager.registered_paths)
+        SECONDS_TO_WAIT = 60 * 5
+        while True:
+            self.fileManager.makro_file_check()
+            time.sleep(SECONDS_TO_WAIT)
