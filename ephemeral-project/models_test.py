@@ -11,10 +11,16 @@ class ModelTest(unittest.TestCase):
 
 
     def setUp(self):
-        testPath = "/home/amadeus/Documents/eigene-projekte/ephemeral/sample-files/deleteme"
+        testPath = "./sample-files/deleteme"
+        testPath2 = "./sample-files/testing-purpose-ephemeral-0-:-20"
 
         with open(testPath, 'w') as f:
             f.write("Temporary test content")
+
+
+        with open(testPath2, 'w') as f:
+            f.write("Temporary test content")
+
 
         self.config = Config()
         self.config.loadFile()
@@ -97,17 +103,16 @@ class ModelTest(unittest.TestCase):
         copiedArgs = firstTimer.args
         
         # Fast Forward effect by replacing time
-        firstTimer = threading.Timer(5, copiedFunction, args=(copiedArgs))
+        # For a reason the comma after the copiedArgs needs to stay -> https://chatgpt.com/share/67216462-aa7c-8001-8598-bbbd9c8d9cad
+        # Is necessary so Python doesn't interpret the String as a tuple of seconds
+        firstTimer = threading.Timer(5, copiedFunction, args=(copiedArgs,))
         firstTimer.start()
-        time.sleep(11)
+        time.sleep(6)
 
-    
-        print("Finished")
-        print(firstTimer.finished._flag)
-        print("Args: " + firstTimer.args)
-        print(firstTimer.function)
+        print("Before Check")
+        fileDeleted = not os.path.exists(firstTimer.args[0])
+        print("After Check " + str(fileDeleted))
 
-        fileDeleted = os.path.exists(firstTimer.args)
-            
-        self.assertFalse(fileDeleted)
+        self.assertTrue(fileDeleted)
 
+unittest.main()
