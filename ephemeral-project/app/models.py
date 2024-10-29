@@ -29,7 +29,6 @@ class EphemeralFileManager:
             "minutesLeft": int(minutes)
         }
         self.registered_paths.append(file_dict)
-        print(f"Registered ephemeral path: {path}")
 
 
     def is_ephemeral(self, dirs, root):
@@ -62,13 +61,11 @@ class EphemeralFileManager:
             self.is_ephemeral(dirs, root)
 
 
-    def delete_path(self, path_index):
+    def delete_path(self, path):
         """
-        Delete a file or directory at a given index in registered paths.
+        Delete a file or directory at a given path.
         """
         try:
-            path_info = self.registered_paths.pop(path_index)
-            path = path_info["pathname"]
 
             if os.path.isfile(path):
                 os.remove(path)

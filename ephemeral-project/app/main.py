@@ -10,6 +10,6 @@ def main():
 
     ephemeralFileManager.makro_file_check()
     taskManager.start_tasks()
-    print(ephemeralFileManager.registered_paths)
+
 if __name__ == "__main__":
     main()

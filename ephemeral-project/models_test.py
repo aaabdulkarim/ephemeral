@@ -1,8 +1,9 @@
 import threading
 import unittest
+import os
+import time
 from app.models import EphemeralFileManager, TaskManager
 from app.configmodel import Config
-
 
 
 class ModelTest(unittest.TestCase):
@@ -14,8 +15,27 @@ class ModelTest(unittest.TestCase):
         self.ephemeralFileManager = EphemeralFileManager("/")
         self.taskManager = TaskManager(self.config, self.ephemeralFileManager)
 
-
+    def test_delete_path(self):
+        """
+        This tests the EphemeralFileManager.delete_path method if it can delete any files
+        """
+        testPath = "/home/amadeus/Documents/eigene-projekte/ephemeral/sample-files/deleteme"
         
+        # Ensure the file exists before trying to delete it
+        if not os.path.exists(testPath):
+            # Create the file for testing purposes
+            with open(testPath, 'w') as f:
+                f.write("Temporary test content")
+
+        else:
+            print("False")
+        # Attempt to delete the file
+        self.ephemeralFileManager.delete_path(testPath)
+            
+        
+        fileExists = os.path.exists(testPath)
+        self.assertFalse(fileExists)
+
     def test_makro_file_check(self):
         expectedString = "/home/amadeus/Documents/eigene-projekte/ephemeral/sample-files/testing-purpose-ephemeral-0-:-20"
         self.ephemeralFileManager.makro_file_check()
@@ -40,9 +60,7 @@ class ModelTest(unittest.TestCase):
         self.ephemeralFileManager.makro_file_check()
         self.taskManager.start_tasks()
 
-        expectedString = "/home/amadeus/Documents/eigene-projekte/ephemeral/sample-files/testing-purpose-ephemeral-0-:-20"
         expectedFun = self.ephemeralFileManager.delete_path
-        expectedArgs = expectedString
 
 
         foundExpectedTimer = False
@@ -54,7 +72,8 @@ class ModelTest(unittest.TestCase):
             if all(conditions):
                 foundExpectedTimer = True
                 break
-                
+        
+        
         self.assertTrue(foundExpectedTimer)
 
 
@@ -65,5 +84,21 @@ class ModelTest(unittest.TestCase):
         """
         self.ephemeralFileManager.makro_file_check()
         self.taskManager.start_tasks()
-        print(self.taskManager.timers[0])
 
+        firstTimer = self.taskManager.timers[0]
+
+        copiedFunction = firstTimer.function
+        copiedArgs = firstTimer.args
+        
+        # Fast Forward effect by replacing time
+        firstTimer = threading.Timer(10, copiedFunction, args=(copiedArgs))
+        time.sleep(11)
+        print("Args: " + firstTimer.args)
+        print(firstTimer.function)
+
+        fileDeleted = os.path.exists(copiedArgs)
+
+            
+        self.assertFalse(fileDeleted)
+
+unittest.main()
