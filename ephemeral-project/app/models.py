@@ -86,7 +86,7 @@ class TaskManager:
         self.timers = []
     
 
-    def start_tasks(self):
+    def eval_timers(self):
         for path in self.fileManager.registered_paths: 
             method_delay = self.configs.defaultTimeToLive
 
@@ -97,6 +97,9 @@ class TaskManager:
             timer = threading.Timer(method_delay, self.fileManager.delete_path, args=(path["pathName"]))
             self.timers.append(timer)
 
+    def start_tasks(self):
+        for timer in self.timers:
+            timer.start()
 
     def continous_loop(self):
         SECONDS_TO_WAIT = 60 * 5

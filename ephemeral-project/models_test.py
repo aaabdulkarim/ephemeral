@@ -1,7 +1,8 @@
-import threading
-import unittest
 import os
 import time
+import threading
+import unittest
+
 from app.models import EphemeralFileManager, TaskManager
 from app.configmodel import Config
 
@@ -10,6 +11,11 @@ class ModelTest(unittest.TestCase):
 
 
     def setUp(self):
+        testPath = "/home/amadeus/Documents/eigene-projekte/ephemeral/sample-files/deleteme"
+
+        with open(testPath, 'w') as f:
+            f.write("Temporary test content")
+
         self.config = Config()
         self.config.loadFile()
         self.ephemeralFileManager = EphemeralFileManager("/")
@@ -49,7 +55,7 @@ class ModelTest(unittest.TestCase):
         Prerequisits: file with ephemeral naming convention on the system
         """
         self.ephemeralFileManager.makro_file_check()
-        self.taskManager.start_tasks()
+        self.taskManager.eval_timers()
         self.assertGreaterEqual(len(self.taskManager.timers), 1)  
 
 
@@ -58,7 +64,7 @@ class ModelTest(unittest.TestCase):
         Prerequisits: file named testing-purpose-ephemeral-0-:-20 convention on the system
         """
         self.ephemeralFileManager.makro_file_check()
-        self.taskManager.start_tasks()
+        self.taskManager.eval_timers()
 
         expectedFun = self.ephemeralFileManager.delete_path
 
@@ -83,7 +89,7 @@ class ModelTest(unittest.TestCase):
         Prerequisits: file with ephemeral naming convention on the system
         """
         self.ephemeralFileManager.makro_file_check()
-        self.taskManager.start_tasks()
+        self.taskManager.eval_timers()
 
         firstTimer = self.taskManager.timers[0]
 
@@ -91,14 +97,17 @@ class ModelTest(unittest.TestCase):
         copiedArgs = firstTimer.args
         
         # Fast Forward effect by replacing time
-        firstTimer = threading.Timer(10, copiedFunction, args=(copiedArgs))
+        firstTimer = threading.Timer(5, copiedFunction, args=(copiedArgs))
+        firstTimer.start()
         time.sleep(11)
+
+    
+        print("Finished")
+        print(firstTimer.finished._flag)
         print("Args: " + firstTimer.args)
         print(firstTimer.function)
 
-        fileDeleted = os.path.exists(copiedArgs)
-
+        fileDeleted = os.path.exists(firstTimer.args)
             
         self.assertFalse(fileDeleted)
 
-unittest.main()
