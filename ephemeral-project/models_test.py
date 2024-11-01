@@ -115,4 +115,13 @@ class ModelTest(unittest.TestCase):
 
         self.assertTrue(fileDeleted)
 
-unittest.main()
+    def test_duplicate_registered_paths_not_possible(self):
+        self.ephemeralFileManager.add_ephemeral_path("/", "ephemeral-2-:30", "2", "30")
+        self.ephemeralFileManager.add_ephemeral_path("/", "ephemeral-3-:15", "3", "15")
+        self.ephemeralFileManager.add_ephemeral_path("/", "ephemeral-2-:30", "2", "30")  # Duplicate path
+        
+        # Ensure duplicates are not allowed in registered_paths
+        # Creates set of pathnames which excludes duplicates
+        unique_paths = {item["pathName"] for item in self.ephemeralFileManager.registered_paths}
+        self.assertEqual(len(unique_paths), len(self.ephemeralFileManager.registered_paths),
+                         "Duplicate entries found in registered_paths")

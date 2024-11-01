@@ -8,9 +8,15 @@ class EphemeralFileManager:
     def __init__(self, base_path, term="ephemeral"):
         self.base_path = base_path
         self.term = term.lower()
-        self.registered_paths = []
 
-    
+        # instead of making 2 lists we can make another attribute in the path Object Dict
+        # Adding pathObjects to different lists based on conditions
+        # is a hard way of giving these objects another boolean attribute
+        # OR We keep it that way and don't cause any bugs
+        self.registered_paths = []
+        self.already_handled_paths = []
+
+
     def add_ephemeral_path(self, list):
         """
         This Methods adds external lists to the registered path
@@ -28,8 +34,10 @@ class EphemeralFileManager:
             "hoursLeft": int(hours),
             "minutesLeft": int(minutes)
         }
-        self.registered_paths.append(file_dict)
 
+        # Stops the Program from allowing duplicates
+        if file_dict not in self.registered_paths:
+            self.registered_paths.append(file_dict)
 
     def is_ephemeral(self, dirs, root):
         """
@@ -71,6 +79,8 @@ class EphemeralFileManager:
                 os.remove(path)
             elif os.path.isdir(path):
                 os.rmdir(path)
+            # Removes from already_handled_
+            self.already_handled_paths.remove(path)
             print(f"Deleted {path}")
 
         except IndexError:
@@ -89,20 +99,39 @@ class TaskManager:
     def eval_timers(self):
         for path in self.fileManager.registered_paths: 
             method_delay = self.configs.defaultTimeToLive
+            self.fileManager.registered_paths.remove(path)
 
-            # Needs to check if hourLeft and minutesLeft isn't empty
-            if "minutesLeft" in path and "hoursLeft" in path:
-                method_delay = path["hoursLeft"] * 3600 + path["minutesLeft"] * 60
-            
-            timer = threading.Timer(method_delay, self.fileManager.delete_path, args=(path["pathName"]))
-            self.timers.append(timer)
+            if path not in self.fileManager.already_handled_paths:
+                # Needs to check if hourLeft and minutesLeft isn't empty
+                if "minutesLeft" in path and "hoursLeft" in path:
+                    method_delay = path["hoursLeft"] * 3600 + path["minutesLeft"] * 60
+                
+                timer = threading.Timer(method_delay, self.fileManager.delete_path, args=(path["pathName"]))
+                
+                # So the system of the file manager doesnt allow duplicates
+                self.fileManager.already_handled_paths.append(path)
+                self.timers.append(timer)
 
     def start_tasks(self):
-        for timer in self.timers:
-            timer.start()
-
+        for timer in self.timers:                
+            timer = timers.remove(timer)
+            if timer.is_alive() == False:
+                timer.start()
+        
     def continous_loop(self):
+        """
+        The task of this method is to act as a continous loop
+        which will do a makro system check for ephemeral files every 5 minutes        
+        """
         SECONDS_TO_WAIT = 60 * 5
         while True:
+            # The problem is that after the second iteration it will add the timers of previous
+            # Ephemeral Files again.
             self.fileManager.makro_file_check()
+            self.fileManager.start_tasks()
+            """
+            Need to create new ephemeral file manager and check for every Config File Path as base parameter
+            Add the regsitered_paths to the main ephemeral File manager registered_paths 
+            """
+
             time.sleep(SECONDS_TO_WAIT)
