@@ -125,3 +125,8 @@ class ModelTest(unittest.TestCase):
         unique_paths = {item["pathName"] for item in self.ephemeralFileManager.registered_paths}
         self.assertEqual(len(unique_paths), len(self.ephemeralFileManager.registered_paths),
                          "Duplicate entries found in registered_paths")
+
+    def test_directory_is_cleared_not_deleted(self):
+        """
+        This should test if a directory is cleared after a specific amount of time instead of deleted
+        """

@@ -88,6 +88,14 @@ class EphemeralFileManager:
         except Exception as e:
             print(f"Error deleting {path}: {e}")
 
+    def clearDirectory(self, path):
+        listOfSubPaths = os.listdir(path)
+        for subPath in listOfSubPaths:
+            if os.path.isdir(subPath):
+                clearDirectory(subPath)
+            else:
+                os.remove(path)
+
 
 class TaskManager:
     def __init__(self, configObject, ephemeralFileManager):
