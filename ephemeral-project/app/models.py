@@ -3,6 +3,8 @@ import threading
 import time
 
 
+# TODO: Make List which saves files to a Set
+
 class EphemeralFileManager:
 
     def __init__(self, base_path, term="ephemeral"):
