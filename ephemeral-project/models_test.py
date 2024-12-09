@@ -13,12 +13,16 @@ class ModelTest(unittest.TestCase):
     def setUp(self):
         testPath = "./sample-files/deleteme"
         testPath2 = "./sample-files/testing-purpose-ephemeral-0-:-20"
+        testDirectoryPath = "./sample-files/testfolder"
 
         with open(testPath, 'w') as f:
             f.write("Temporary test content")
 
 
         with open(testPath2, 'w') as f:
+            f.write("Temporary test content")
+
+        with open(testDirectoryPath+"/deletemeInFolder", "w") as f:
             f.write("Temporary test content")
 
 
@@ -109,13 +113,14 @@ class ModelTest(unittest.TestCase):
         firstTimer.start()
         time.sleep(6)
 
-        print("Before Check")
         fileDeleted = not os.path.exists(firstTimer.args[0])
-        print("After Check " + str(fileDeleted))
 
         self.assertTrue(fileDeleted)
 
     def test_duplicate_registered_paths_not_possible(self):
+        """
+        This tests if duplicates are not allowed
+        """
         self.ephemeralFileManager.add_ephemeral_path("/", "ephemeral-2-:30", "2", "30")
         self.ephemeralFileManager.add_ephemeral_path("/", "ephemeral-3-:15", "3", "15")
         self.ephemeralFileManager.add_ephemeral_path("/", "ephemeral-2-:30", "2", "30")  # Duplicate path
@@ -128,5 +133,11 @@ class ModelTest(unittest.TestCase):
 
     def test_directory_is_cleared_not_deleted(self):
         """
-        This should test if a directory is cleared after a specific amount of time instead of deleted
+        This should test if a directory is cleared after a instead of deleted
         """
+        testDirectoryPath = "./sample-files/testfolder"
+
+        self.ephemeralFileManager.delete_path(testDirectoryPath)
+
+        self.assertTrue(os.path.exists(testDirectoryPath))
+
